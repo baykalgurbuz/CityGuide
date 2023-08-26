@@ -31,6 +31,7 @@ namespace CityGuide
             //Db Connection
             services.AddDbContext<DataContext> (x=>x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
+            services.AddCors();//Web baðlantýýsýnda gerekli olan eklenti
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CityGuide", Version = "v1" });
@@ -46,7 +47,8 @@ namespace CityGuide
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CityGuide v1"));
             }
-
+            //Cors Middleware
+            app.UseCors(x=>x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
             app.UseHttpsRedirection();
 
             app.UseRouting();
