@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CityGuide.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,10 @@ namespace CityGuide.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
+        DataContext _context;
+
+       
+
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -18,22 +24,23 @@ namespace CityGuide.Controllers
 
         private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, DataContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task<ActionResult> GetValues()
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+            var values =await _context.Values.ToListAsync();
+            return Ok(values);
+        }
+        [HttpGet("{id}")]
+        public async Task<ActionResult> Get(int id)
+        {
+            var value = await _context.Values.FirstOrDefaultAsync(x => x.Id == id);
+            return Ok(value);
         }
         [HttpPost]
         public void Post([FromBody] string value)
