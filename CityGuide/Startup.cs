@@ -1,3 +1,4 @@
+using AutoMapper;
 using CityGuide.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +33,13 @@ namespace CityGuide
             //Db Connection
             services.AddDbContext<DataContext> (x=>x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
+            services.AddAutoMapper();
+            services.AddMvc().AddJsonOptions(opt=>{
+                //Burayý araþtýr
+                ReferenceLoopHandling ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
             services.AddCors();//Web baðlantýýsýnda gerekli olan eklenti
+            services.AddScoped<IAppRepository, AppRepository>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CityGuide", Version = "v1" });
