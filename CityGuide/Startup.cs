@@ -44,6 +44,7 @@ namespace CityGuide
             });
             services.AddCors();//Web baðlantýýsýnda gerekli olan eklenti
             services.AddScoped<IAppRepository, AppRepository>();
+            services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options=>{//Autentication
                 options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
